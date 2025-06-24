@@ -31,7 +31,7 @@ function secadoMaquinaRk4(H0, h, t0 = 0) {
 
 function secadoSoloRk4(H0, h, k, tf, t0 = 0) {
   // Definimos la función f(t, H) = dH/dt = -k * H
-  const f = (t, H) => k * H;
+  const f = (t, H) => (-k) * H;
 
   let t = t0;
   let H = H0;
@@ -60,7 +60,5 @@ function secadoSoloRk4(H0, h, k, tf, t0 = 0) {
   return trayecto;
 }
 
-module.exports = {
-  secadoMaquinaRk4,
-  secadoSoloRk4,
-};
+export { secadoMaquinaRk4, secadoSoloRk4 };
+

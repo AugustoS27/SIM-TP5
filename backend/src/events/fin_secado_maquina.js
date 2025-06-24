@@ -1,5 +1,5 @@
-function finSecadoMaquina(vector) {
+export default function finSecadoMaquina(vector) {
   console.log(vector);
 }
 
-module.exports = finSecadoMaquina;
+

@@ -1,5 +1,4 @@
-function finSecadoSolo(vector) {
+export default function finSecadoSolo(vector) {
   console.log(vector);
 }
 
-module.exports = finSecadoSolo;

@@ -1,13 +1,16 @@
-class Vehiculo {
-  constructor(id, tipo, destino, relojActual) {
-    this.id = id;
+export default class Vehiculo {
+  static ultimoId = 0;
+
+  constructor(tipo, estado, destino, relojActual, tiempoComienzoLimpieza, tiempoComienzoLavado) {
+    this.id = ++Vehiculo.ultimoId
     this.tipo = tipo;
     this.destino = destino;
-    this.estado = null;
+    this.estado = estado || null;
     this.humedad = 100;
     this.tiempoLlegada = relojActual;
-    this.tiempoComienzoSecado = null;
+    this.tiempoComienzoLimpieza = tiempoComienzoLimpieza || null;
+    this.tiempoComienzoLavado = tiempoComienzoLavado || null;
+    this.tiempoComienzoSecadoSolo = null;
   }
 }
 
-module.exports = Vehiculo;
