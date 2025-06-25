@@ -47,6 +47,5 @@ export default function llegadaVehiculoLimpieza(vectorActual, vectorAnterior, re
   vectorActual[17] = finLimpieza; //Fin Limpieza
   vectorActual[24] = limpieza.estado; //Estado de limpieza
   vectorActual.push(vehiculo); //Agrega el vehiculo al vector actual
-
   return vectorActual;
 }

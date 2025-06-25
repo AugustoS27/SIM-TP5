@@ -48,9 +48,7 @@ export default function simulacion(
     let eventos = [5, 8, 13, 14, 17, 20]
     
     let siguienteEvento = calcularSiguienteEvento(vectorAnterior, eventos);
-
     
-
     switch (siguienteEvento) {
       case 5: // llegada_lavado
         vectorActual = llegadaVehiculoLavado( vectorActual,
@@ -101,5 +99,5 @@ export default function simulacion(
   }
   return historial
 }
-let v = simulacion(15, 1, 5, 0.1, 15, 15, 100, 100)
+let v = simulacion(5, 1, 3, 0.1, 2, 4, 6, 20)
 console.log(v)

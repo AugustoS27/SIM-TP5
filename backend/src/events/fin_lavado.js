@@ -2,7 +2,6 @@ import { secadoMaquinaRk4 } from "../rk4/rk4.js";
 
 export default function finLavado(vectorActual, vectorAnterior, reloj, lavado, mediaFinLavado, secadora, h) {
   const cola = vectorAnterior[23];
-
   const estado = lavado.id === 1 ? "siendo lavado 1" : "siendo lavado 2";
 
   if(cola === 0){
@@ -67,12 +66,9 @@ export default function finLavado(vectorActual, vectorAnterior, reloj, lavado, m
       }
     }
 
-
     vectorActual[minIndex].estado = estado;
     vectorActual[minIndex].tiempoComienzoLavado = reloj;
-
     vectorActual[30] += reloj - vectorAnterior[minIndex].tiempoLlegada; // Acumula el tiempo de espera en lavado
-
     const rndFinLavado = Math.random();
     const tiempoLavado = -mediaFinLavado * Math.log(1 - rndFinLavado);
     const finLavado = tiempoLavado + reloj;
@@ -85,15 +81,9 @@ export default function finLavado(vectorActual, vectorAnterior, reloj, lavado, m
       vectorActual[14] = finLavado; // Fin Lavado 2
     }
   }
-
   vectorActual[0] = vectorAnterior[0] + 1; // Aumenta el N
   vectorActual[1] = "Fin_lavado"; // Nombre del evento
   vectorActual[2] = reloj; // Reloj
-  
-
-
-
-
   return vectorActual
 }
 

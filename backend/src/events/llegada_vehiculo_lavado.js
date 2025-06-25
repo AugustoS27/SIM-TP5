@@ -41,9 +41,6 @@ export default function llegadaVehiculoLavado(vectorActual, vectorAnterior, relo
     vehiculo = new Vehiculo(tipoVehiculo, "esperando lavado", "lavado", reloj);
     vectorActual[23] += 1; //Aumenta la cola
   }
-
-  
-
   vectorActual[0] = vectorAnterior[0] + 1; //Aumenta el N
   vectorActual[1] = "Llegada_lavado" //Nombre del evento
   vectorActual[2] = reloj;  //Reloj
@@ -55,6 +52,6 @@ export default function llegadaVehiculoLavado(vectorActual, vectorAnterior, relo
   vectorActual[21] = lavado1.estado; //Estado de lavado 1
   vectorActual[22] = lavado2.estado; //Estado de lavado 2
   vectorActual.push(vehiculo);
-  
+
   return vectorActual;
 }

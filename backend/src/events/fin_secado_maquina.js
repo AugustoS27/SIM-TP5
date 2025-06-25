@@ -45,19 +45,16 @@ export default function finSecadoMaquina(vectorActual, vectorAnterior, reloj, se
     const H = secadoSoloRk4(100, h, k, tiempoEnSecadoSolo, 0);
     const tiempoSecado = secadoMaquinaRk4(H, h, 0)
     const finSecado = reloj + tiempoSecado;
-
     vectorActual[19] = tiempoSecado; // Tiempo de secado
     vectorActual[20] = finSecado; // Fin secado
 
   }
-  
   vectorActual[0] = vectorAnterior[0] + 1; // Aumenta el N
   vectorActual[1] = "Fin_secado_maquina"; // Nombre del evento
   vectorActual[2] = reloj; // Reloj
   vectorActual[26] = secadora.estado; // Estado de la secadora
   vectorActual[29] += tiempoSecadoMaquina; // Acumula el tiempo de secado
   vectorActual[34] += 1; // Aumenta el contador de secados
-
   return vectorActual;
 }
 

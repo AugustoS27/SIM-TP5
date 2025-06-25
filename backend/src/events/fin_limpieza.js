@@ -16,7 +16,6 @@ export default function finLimpieza(vectorActual, vectorAnterior, reloj, limpiez
   } else{
     vectorActual[25] = cola - 1; // Disminuye la cola de limpieza
     limpieza.estado = "ocupado";
-
     let minIndex = -1;
     for (let i = 35; i < vectorAnterior.length; i++) {
       if (vectorAnterior[i].estado === "siendo limpiado"){
@@ -36,15 +35,12 @@ export default function finLimpieza(vectorActual, vectorAnterior, reloj, limpiez
     vectorActual[minIndex].estado = "siendo limpiado"
     vectorActual[minIndex].tiempoComienzoLimpieza = reloj;
     vectorActual[31] += reloj - vectorActual[minIndex].tiempoLlegada; // Acumula el tiempo de espera en limpieza
-
     const rndFinLimpieza = Math.random();
     const tiempoLimpieza = -mediaFinLimpieza * Math.log(1 - rndFinLimpieza);
     const finLimpieza = tiempoLimpieza + reloj;
-
     vectorActual[15] = rndFinLimpieza; // Rnd Fin Limpieza
     vectorActual[16] = tiempoLimpieza; // Tiempo de limpieza
     vectorActual[17] = finLimpieza; // Fin Limpieza
-
   }
 
   vectorActual[0] = vectorAnterior[0] + 1; // Aumenta el N
