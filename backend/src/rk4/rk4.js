@@ -26,7 +26,7 @@ function secadoMaquinaRk4(H0, h, t0 = 0) {
     trayecto.push({ t, H });
   }
 
-  return trayecto;
+  return t;
 }
 
 function secadoSoloRk4(H0, h, k, tf, t0 = 0) {
@@ -56,8 +56,9 @@ function secadoSoloRk4(H0, h, k, tf, t0 = 0) {
     // Almacenamos la nueva línea de aproximación
     trayecto.push({ t, H });
   }
+  
 
-  return trayecto;
+  return H;
 }
 
 export { secadoMaquinaRk4, secadoSoloRk4 };

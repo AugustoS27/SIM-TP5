@@ -21,7 +21,7 @@ import Limpieza  from "../models/limpieza.model.js";
 import Secado  from "../models/secado.model.js";
 import { calcularSiguienteEvento } from "../utils/calcular_proximo_evento.js";
 
-function simulacion(
+export default function simulacion(
   cantidadEventos,
   primerEvento,
   cantidadLineas,
@@ -38,6 +38,7 @@ function simulacion(
   let lavado2 = new Lavado(2);
   let limpieza = new Limpieza(1);
   let secadora = new Secado(1);
+  let cantLineas = cantidadLineas
 
   let historial = [];
   vectorAnterior = inicializacion(vectorAnterior, mediaLlegadaLavado, mediaLlegadaLimpieza, lavado1, lavado2, limpieza, secadora);
@@ -47,6 +48,8 @@ function simulacion(
     let eventos = [5, 8, 13, 14, 17, 20]
     
     let siguienteEvento = calcularSiguienteEvento(vectorAnterior, eventos);
+
+    
 
     switch (siguienteEvento) {
       case 5: // llegada_lavado
@@ -58,7 +61,6 @@ function simulacion(
                                               lavado1, 
                                               lavado2
                                             );
-        console.log("Llegada Lavado", vectorAnterior[25]);
         
         break;
       case 8: // llegada_limpieza
@@ -69,17 +71,14 @@ function simulacion(
                                                 mediaFinLimpieza, 
                                                 limpieza
                                               );
-        console.log("Llegada Limpieza", vectorAnterior[25]);
         break;
       case 13: // fin_lavado1
         vectorActual = finLavado(vectorActual, vectorAnterior, vectorAnterior[siguienteEvento], lavado1, mediaFinLavado, secadora, h)
         vectorActual[0] = vectorAnterior[0] + 1
-        console.log("fin_lavado")
         break;
       case 14: // fin_lavado2
         vectorActual = finLavado(vectorActual, vectorAnterior, vectorAnterior[siguienteEvento], lavado2, mediaFinLavado, secadora, h)
         vectorActual[0] = vectorAnterior[0] + 1
-        console.log("fin_lavado")
         break;
       case 17: // fin_limpieza
         vectorActual = finLimpieza( vectorActual, 
@@ -88,18 +87,19 @@ function simulacion(
                                     limpieza, 
                                     mediaFinLimpieza
                                   );
-        console.log("Fin Limpieza", vectorAnterior[25]);
         break;
       case 20: // fin_secado
-        //vectorActual = finSecadoMaquina()
-        vectorActual[20] = null;
-        console.log("fin_secado")
+        vectorActual = finSecadoMaquina(vectorActual, vectorAnterior, vectorAnterior[siguienteEvento], secadora, h);
         break;
 
     }
+    if (primerEvento == vectorAnterior[0] || cantLineas >= 0){
+      historial.push(vectorAnterior)
+      cantLineas -= 1
+    }
     
   }
-  return vectorActual
+  return historial
 }
-let v = simulacion(20, 1, 10, 0.1, 15, 15, 1, 1)
+let v = simulacion(15, 1, 5, 0.1, 15, 15, 100, 100)
 console.log(v)

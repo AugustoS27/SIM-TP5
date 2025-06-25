@@ -1,45 +1,41 @@
 import { Router } from "express";
+import simulacion from "../simulation/simulation.js"
 
 const router = Router();
 
-/*
-    Parametros que seran tomado desde el frontend
-  - cantidad de eventos
-  - primer evento a mostrar
-  - cantidad de lineas luego del primer evento (HASTA QUE EVENTO SE MOSTRARA, OBLIGATORIAMENTE LA ULTIMA FILA)
-  - Paso h0 (RK)
-  - Media de Exponencial de llegada_lavado
-  - Media de Exponencial de llegada_limpieza
-  - Media de Exponencial fin_lavado
-  - Media de Exponencial fin_limpieza
-*/
 
-router.get("/simular", (req, res) => {
-  const {
-    cantidadAGenerar,
-    primeroAMostrar,
-    cantidadAMostrar,
-    paso,
-    mediaLlegadaLavado,
-    mediaLlegadaLimpieza,
-    mediaFinLavado,
-    mediaFinLimpieza,
-  } = req.body;
 
-  console.log(
-    cantidadAGenerar,
-    primeroAMostrar,
-    cantidadAMostrar,
-    paso,
-    mediaLlegadaLavado,
-    mediaLlegadaLimpieza,
-    mediaFinLavado,
-    mediaFinLimpieza
-  );
+router.post("/simular", async (req, res) => {
+  try {
+    const {
+      cantidadAGenerar,
+      primeroAMostrar,
+      cantidadAMostrar,
+      paso,
+      mediaLlegadaLavado,
+      mediaLlegadaLimpieza,
+      mediaFinLavado,
+      mediaFinLimpieza,
+    } = req.body;
 
-  res.json({
-    message: "Simulacion realizada con éxito",
-  });
+
+
+    const result = await simulacion(
+      Number(cantidadAGenerar),
+      Number(primeroAMostrar),
+      Number(cantidadAMostrar),
+      Number(paso),
+      Number(mediaLlegadaLavado),
+      Number(mediaLlegadaLimpieza),
+      Number(mediaFinLavado),
+      Number(mediaFinLimpieza)
+    );
+
+    res.json(result);
+
+  } catch (error) {
+    res.status(500).json({ error: "error" });
+  }
 });
 
 router.get("/mostrar", (req, res) => {

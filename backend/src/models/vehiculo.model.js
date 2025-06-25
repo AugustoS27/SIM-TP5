@@ -11,6 +11,7 @@ export default class Vehiculo {
     this.tiempoComienzoLimpieza = tiempoComienzoLimpieza || null;
     this.tiempoComienzoLavado = tiempoComienzoLavado || null;
     this.tiempoComienzoSecadoSolo = null;
+    this.tiempoComienzoSecadoMaquina = null;
   }
 }
 

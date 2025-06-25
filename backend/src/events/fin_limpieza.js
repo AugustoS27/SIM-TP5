@@ -33,9 +33,6 @@ export default function finLimpieza(vectorActual, vectorAnterior, reloj, limpiez
       }
     }
 
-    console.log("minIndex", minIndex);
-    console.log("vectorActual[minIndex]", vectorActual[minIndex]);
-
     vectorActual[minIndex].estado = "siendo limpiado"
     vectorActual[minIndex].tiempoComienzoLimpieza = reloj;
     vectorActual[31] += reloj - vectorActual[minIndex].tiempoLlegada; // Acumula el tiempo de espera en limpieza

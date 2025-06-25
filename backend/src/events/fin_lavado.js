@@ -10,6 +10,7 @@ export default function finLavado(vectorActual, vectorAnterior, reloj, lavado, m
       if (vectorAnterior[i].estado === estado){
         if (secadora.estado === "libre"){
           vectorActual[i].estado = "siendo secado con secadora";
+          vectorActual[i].tiempoComienzoSecadoMaquina = reloj; // Guarda el tiempo de comienzo del secado con secadora
           const tiempoSecado = secadoMaquinaRk4(vectorAnterior[i].humedad, h)
           vectorActual[18] = vectorAnterior[i].humedad
           vectorActual[19] = tiempoSecado; // Tiempo de secado
@@ -27,8 +28,10 @@ export default function finLavado(vectorActual, vectorAnterior, reloj, lavado, m
     lavado.estado = "libre";
     if(lavado.id === 1){
       vectorActual[13] = null; // Fin Lavado 1
+      vectorActual[21] = lavado.estado; // Estado de lavado 1
     } else if(lavado.id === 2){
       vectorActual[14] = null; // Fin Lavado 2
+      vectorActual[22] = lavado.estado; // Estado de lavado 1
     }
 
   } else {
@@ -68,6 +71,8 @@ export default function finLavado(vectorActual, vectorAnterior, reloj, lavado, m
     vectorActual[minIndex].estado = estado;
     vectorActual[minIndex].tiempoComienzoLavado = reloj;
 
+    vectorActual[30] += reloj - vectorAnterior[minIndex].tiempoLlegada; // Acumula el tiempo de espera en lavado
+
     const rndFinLavado = Math.random();
     const tiempoLavado = -mediaFinLavado * Math.log(1 - rndFinLavado);
     const finLavado = tiempoLavado + reloj;
@@ -80,6 +85,14 @@ export default function finLavado(vectorActual, vectorAnterior, reloj, lavado, m
       vectorActual[14] = finLavado; // Fin Lavado 2
     }
   }
+
+  vectorActual[0] = vectorAnterior[0] + 1; // Aumenta el N
+  vectorActual[1] = "Fin_lavado"; // Nombre del evento
+  vectorActual[2] = reloj; // Reloj
+  
+
+
+
 
   return vectorActual
 }

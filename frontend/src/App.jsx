@@ -1,7 +1,6 @@
-import "./App.css";
+"use client"
 
-function App() {
-  return <>HOLA</>;
+
+export default function QueueSimulation() {
+    
 }
-
-export default App;
