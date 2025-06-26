@@ -5,10 +5,50 @@ import "./index.css";
 
 function App() {
   const [datos, setDatos] = useState([]);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [datosRK4, setDatosRK4] = useState([]);
+  const [datosRk4Solo, setDatosRk4Solo] = useState([]);
+
   const maxVehiculos = datos.reduce((max, fila) => {
     const vehiculosEnFila = fila.slice(35).length;
     return Math.max(max, vehiculosEnFila);
   }, 0);
+
+  const rungeKutta = async (colIndex, filaIndex, fila) => {
+    if (colIndex !== 19) return;
+    const reloj = fila[2];
+    const humedad = fila[18];
+
+    // Buscar el primer vehículo "SiendoSecadoConSecadora"
+    const vehiculos = fila.slice(35);
+    const vehiculoObjetivo = vehiculos.find(
+      (v) => v && v.estado === "siendo secado con secadora"
+    );
+
+    const tiempoSecado = vehiculoObjetivo?.tiempoComienzoSecadoSolo;
+    const tipo = vehiculoObjetivo?.tipo;
+
+    if (humedad === undefined || tiempoSecado === undefined) {
+      alert("No se realizo Runge Kutta en esta celda.");
+      return;
+    }
+
+    const respuesta = await fetch("http://localhost:3000/api/rk4", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        humedad,
+        tipo: tipo,
+        reloj,
+        tiempoSecado,
+      }),
+    });
+    const resultado = await respuesta.json();
+    setDatosRK4(resultado.secadoMaquinaRk4);
+    setDatosRk4Solo(resultado.secadoSoloRk4);
+    setMostrarModal(true);
+  };
+
   return (
     <main className="p-6 font-sans bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-4 text-center">
@@ -25,7 +65,7 @@ function App() {
               {Array.from({ length: maxVehiculos }).map((_, i) => (
                 <th
                   key={`vehiculo-header-${i}`}
-                  colSpan={6}
+                  colSpan={7}
                   className="text-left px-2 py-1 border"
                 >
                   Vehículo {i + 1}
@@ -80,6 +120,7 @@ function App() {
               {Array.from({ length: maxVehiculos }).map((_, i) =>
                 [
                   "Estado",
+                  "Tipo vehiculo",
                   "Tiempo Llegada",
                   "Incio limpieza",
                   "Incio lavado",
@@ -106,6 +147,7 @@ function App() {
                   <td
                     key={`fila-${filaIndex}-col-${colIndex}`}
                     className="px-2 py-1 border"
+                    onClick={() => rungeKutta(colIndex, filaIndex, fila)}
                   >
                     {valor !== null && valor !== undefined
                       ? typeof valor === "number"
@@ -120,6 +162,7 @@ function App() {
                   vehiculo ? (
                     [
                       vehiculo.estado,
+                      vehiculo.tipo,
                       vehiculo.tiempoLlegada,
                       vehiculo.tiempoComienzoLimpieza,
                       vehiculo.tiempoComienzoLavado,
@@ -151,6 +194,129 @@ function App() {
           </tbody>
         </table>
       </div>
+      {mostrarModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center flex-col z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-[80%] max-h-[95%] max-w-3xl relative overflow-auto">
+            <button
+              className="absolute top-2 right-2 text-gray-900 hover:text-black text-lg"
+              onClick={() => setMostrarModal(false)}
+            >
+              ✖
+            </button>
+            <h3 className="text-xl font-bold mb-4 text-center text-blue-700">
+              Resultado de Runge-Kutta
+            </h3>
+            <h4>Secado con máquina</h4>
+            <div className="overflow-x-auto max-h-[400px]">
+              <table className="table-auto w-full text-sm border border-gray-600 shadow-sm">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th className="px-3 py-1 border">t</th>
+                    <th className="px-3 py-1 border">H</th>
+                    <th className="px-3 py-1 border">k1</th>
+                    <th className="px-3 py-1 border">k2</th>
+                    <th className="px-3 py-1 border">k3</th>
+                    <th className="px-3 py-1 border">k4</th>
+                    <th className="px-3 py-1 border">t + h</th>
+                    <th className="px-3 py-1 border">H + ΔH</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {datosRK4.map((fila, filaIndex) => (
+                    <tr
+                      key={`rk4-fila-${filaIndex}`}
+                      className={
+                        filaIndex % 2 === 0 ? "bg-white" : "bg-gray-50"
+                      }
+                    >
+                      <td className="px-3 py-1 border text-center">
+                        {fila.ti.toFixed(4)}
+                      </td>
+                      <td className="px-3 py-1 border text-center">
+                        {fila.hi.toFixed(4)}
+                      </td>
+                      <td className="px-3 py-1 border text-center">
+                        {fila.k1.toFixed(4)}
+                      </td>
+                      <td className="px-3 py-1 border text-center">
+                        {fila.k2.toFixed(4)}
+                      </td>
+                      <td className="px-3 py-1 border text-center">
+                        {fila.k3.toFixed(4)}
+                      </td>
+                      <td className="px-3 py-1 border text-center">
+                        {fila.k4.toFixed(4)}
+                      </td>
+                      <td className="px-3 py-1 border text-center">
+                        {fila.t.toFixed(4)}
+                      </td>
+                      <td className="px-3 py-1 border text-center">
+                        {fila.H.toFixed(4)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-6">
+              {datosRk4Solo && datosRk4Solo.length > 0 && <h4>Secado solo</h4>}
+              {datosRk4Solo && datosRk4Solo.length > 0 && (
+                <div className="overflow-x-auto max-h-[200px]">
+                  <table className="table-auto w-full text-sm border border-gray-600 shadow-sm">
+                    <thead className="bg-gray-100 text-gray-700">
+                      <tr>
+                        <th className="px-3 py-1 border">t</th>
+                        <th className="px-3 py-1 border">H</th>
+                        <th className="px-3 py-1 border">k1</th>
+                        <th className="px-3 py-1 border">k2</th>
+                        <th className="px-3 py-1 border">k3</th>
+                        <th className="px-3 py-1 border">k4</th>
+                        <th className="px-3 py-1 border">t + h</th>
+                        <th className="px-3 py-1 border">H + ΔH</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {datosRk4Solo.map((fila, filaIndex) => (
+                        <tr
+                          key={`rk4-fila-${filaIndex}`}
+                          className={
+                            filaIndex % 2 === 0 ? "bg-white" : "bg-gray-50"
+                          }
+                        >
+                          <td className="px-3 py-1 border text-center">
+                            {fila.ti.toFixed(4)}
+                          </td>
+                          <td className="px-3 py-1 border text-center">
+                            {fila.hi.toFixed(4)}
+                          </td>
+                          <td className="px-3 py-1 border text-center">
+                            {fila.k1.toFixed(4)}
+                          </td>
+                          <td className="px-3 py-1 border text-center">
+                            {fila.k2.toFixed(4)}
+                          </td>
+                          <td className="px-3 py-1 border text-center">
+                            {fila.k3.toFixed(4)}
+                          </td>
+                          <td className="px-3 py-1 border text-center">
+                            {fila.k4.toFixed(4)}
+                          </td>
+                          <td className="px-3 py-1 border text-center">
+                            {fila.t.toFixed(4)}
+                          </td>
+                          <td className="px-3 py-1 border text-center">
+                            {fila.H.toFixed(4)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -12,6 +12,5 @@ export async function simular(formData) {
     if (!response.ok) {
         throw new Error("Error en la petición");
     }
-    console.log("Datos enviados:", parsedData);
     return response.json();
 }

@@ -3,6 +3,7 @@ import simulacion from "../simulation/simulation.js";
 import { secadoMaquinaRk4EndPoint, secadoSoloRk4EndPoint } from "../rk4/rk4.js";
 
 const router = Router();
+let h;
 
 router.post("/simular", async (req, res) => {
   try {
@@ -16,8 +17,10 @@ router.post("/simular", async (req, res) => {
       mediaFinLavado,
       mediaFinLimpieza,
     } = req.body;
+    
+    h = paso
 
-    const result = await simulacion(
+    const result = simulacion(
       Number(cantidadAGenerar),
       Number(primeroAMostrar),
       Number(cantidadAMostrar),
@@ -36,10 +39,30 @@ router.post("/simular", async (req, res) => {
 
 router.post("/rk4", async (req, res) => {
   try {
-    const { humedad, h, k, tiempoSecadoSolo } = req.body;
+    const { humedad, tipo, reloj, tiempoSecado } = req.body;
+    
 
+    let tiempoSecadoSolo = 0;
     let secadoMaquinaRk4;
     let secadoSoloRk4;
+    if (tiempoSecado != undefined || tiempoSecado != null) {
+      tiempoSecadoSolo = reloj - tiempoSecado;
+    }
+    let k;
+
+
+    switch (tipo) {
+      case "pequeño":
+        k = 0.75
+        break;
+      case "mediano":
+        k = 0.50
+        break;
+      case "pick-up":
+        k = 0.25
+        break;
+    }
+    
 
     if (humedad != 100) {
       secadoSoloRk4 = secadoSoloRk4EndPoint(humedad, h, k, tiempoSecadoSolo, 0);
@@ -53,6 +76,7 @@ router.post("/rk4", async (req, res) => {
       secadoMaquinaRk4,
       secadoSoloRk4,
     });
+
   } catch (error) {
     res.status(500).json({ error: "error" });
   }
