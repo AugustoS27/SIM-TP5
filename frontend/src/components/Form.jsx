@@ -6,14 +6,14 @@ import { simular } from "../services/simulation.js";
 
 function FormularioSimulacion({ onResultadoRecibido }) {
   const [formData, setFormData] = useState({
-    cantidadAGenerar: 30,
+    cantidadAGenerar: 100,
     primeroAMostrar: 0,
-    cantidadAMostrar: 10,
+    cantidadAMostrar: 50,
     paso: 0.1,
-    mediaLlegadaLavado: 5,
-    mediaLlegadaLimpieza: 10,
-    mediaFinLavado: 5,
-    mediaFinLimpieza: 10,
+    mediaLlegadaLavado: 2,
+    mediaLlegadaLimpieza: 4,
+    mediaFinLavado: 6,
+    mediaFinLimpieza: 20,
   });
 
   const handleChange = (e) => {
@@ -36,6 +36,7 @@ function FormularioSimulacion({ onResultadoRecibido }) {
       } 
 
       const data = await simular(formData);
+      console.log("Datos recibidos:", data);
       onResultadoRecibido(data);
     } catch (err) {
       console.error("Error en la petición:", err);

@@ -20,7 +20,7 @@ export default function llegadaVehiculoLavado(
   let tipoVehiculo;
   if (rndTipo < 0.2) {
     tipoVehiculo = "pequeño";
-  } else if (rndTipo < 0.5) {
+  } else if (rndTipo < 0.7) {
     tipoVehiculo = "mediano";
   } else {
     tipoVehiculo = "pick-up";

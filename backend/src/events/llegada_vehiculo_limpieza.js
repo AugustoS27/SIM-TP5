@@ -18,7 +18,7 @@ export default function llegadaVehiculoLimpieza(
   let tipoVehiculo;
   if (rndTipo < 0.2) {
     tipoVehiculo = "pequeño";
-  } else if (rndTipo < 0.5) {
+  } else if (rndTipo < 0.7) {
     tipoVehiculo = "mediano";
   } else {
     tipoVehiculo = "pick-up";
@@ -52,6 +52,7 @@ export default function llegadaVehiculoLimpieza(
     vectorActual[25] += 1; //Aumenta la cola
     vectorActual[15] = null;
     vectorActual[16] = null;
+    finLimpieza = vectorAnterior[17] //Mantiene el fin de limpieza anterior
   }
 
   vectorActual[0] = vectorAnterior[0] + 1; //Aumenta el N
