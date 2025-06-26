@@ -23,23 +23,45 @@ function FormularioSimulacion({ onResultadoRecibido }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const cantidadAGenerar = parseInt(formData.cantidadAGenerar);
-      const cantidadAMostrar = parseInt(formData.cantidadAMostrar);
-      const primeroAMostrar = parseInt(formData.primeroAMostrar);
 
-      const cantidadLineasAMostrar = cantidadAMostrar + primeroAMostrar;
-
-      if(cantidadLineasAMostrar > cantidadAGenerar){
-        alert("La cantidad a mostrar no puede ser mayor que la cantidad a generar.");
+    // Validar que todos los campos estén completos
+    for (const [key, value] of Object.entries(formData)) {
+      if (value === "" || value === null || value === undefined) {
+        alert(`El campo "${key}" es obligatorio.`);
         return;
-      } 
+      }
 
+      // Validar que sean números y no contengan letras u otros caracteres
+      if (isNaN(value)) {
+        alert(`El campo "${key}" debe ser un número válido.`);
+        return;
+      }
+
+      // Validar que no sean negativos
+      if (parseFloat(value) < 0) {
+        alert(`El campo "${key}" no puede ser negativo.`);
+        return;
+      }
+    }
+
+    // Validar relación entre campos
+    const cantidadAGenerar = parseInt(formData.cantidadAGenerar);
+    const primeroAMostrar = parseInt(formData.primeroAMostrar);
+    const cantidadAMostrar = parseInt(formData.cantidadAMostrar);
+    const cantidadLineasAMostrar = primeroAMostrar + cantidadAMostrar;
+
+    if (cantidadLineasAMostrar > cantidadAGenerar) {
+      alert("La suma de 'primero a mostrar' + 'cantidad a mostrar' no puede superar la cantidad a generar.");
+      return;
+    }
+
+    try {
       const data = await simular(formData);
       console.log("Datos recibidos:", data);
       onResultadoRecibido(data);
     } catch (err) {
       console.error("Error en la petición:", err);
+      alert("Ocurrió un error al intentar simular. Intente nuevamente.");
     }
   };
 

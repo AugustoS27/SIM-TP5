@@ -2,12 +2,18 @@ import { useState } from "react";
 import "./App.css";
 import FormularioSimulacion from "./components/Form.jsx";
 import "./index.css";
+import { useEffect } from "react";
 
 function App() {
   const [datos, setDatos] = useState([]);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [datosRK4, setDatosRK4] = useState([]);
   const [datosRk4Solo, setDatosRk4Solo] = useState([]);
+  const [promedioEsperaLavado, setPromedioEsperaLavado] = useState(0);
+  const [promedioEsperaLimpieza, setPromedioEsperaLimpieza] = useState(0);
+  const [servicioMasRapido, setServicioMasRapido] = useState("Cualquiera");
+  const [promedioTotalSalidaLavado, setPromedioTotalSalidaLavado] = useState(0);
+  const [promedioTotalSalidaLimpieza, setPromedioTotalSalidaLimpieza] = useState(0);
 
   const maxVehiculos = datos.reduce((max, fila) => {
     const vehiculosEnFila = fila.slice(35).length;
@@ -48,6 +54,56 @@ function App() {
     setDatosRk4Solo(resultado.secadoSoloRk4);
     setMostrarModal(true);
   };
+
+  useEffect(() => {
+    const ultimaFila = datos[datos.length - 1];
+    if (!ultimaFila){
+      return;
+    }
+
+    const tiempoEsperaLavado = ultimaFila[30];
+    const cantidadLavadosTerminados = ultimaFila[32];
+    const tiempoTotalLavado = ultimaFila[27];
+    
+    let promedioLavado = 0
+    if (cantidadLavadosTerminados === 0) {
+      setPromedioEsperaLavado(0);
+      promedioLavado = 0;
+    } else {
+      const promedioEsperaLavado = tiempoEsperaLavado / cantidadLavadosTerminados;
+      setPromedioEsperaLavado(promedioEsperaLavado.toFixed(4));
+      promedioLavado = (tiempoTotalLavado + tiempoEsperaLavado) / cantidadLavadosTerminados;
+    }
+    
+    const tiempoEsperaLimpieza = ultimaFila[31];
+    const cantidadLimpiezasTerminadas = ultimaFila[33];
+    const tiempoTotalLimpieza = ultimaFila[28];
+    let promedioLimpieza = 0;
+    if (cantidadLimpiezasTerminadas === 0) {
+      setPromedioEsperaLimpieza(0);
+      promedioLimpieza = 0;
+    } else {
+      const promedioEsperaLimpieza = tiempoEsperaLimpieza / cantidadLimpiezasTerminadas;
+      setPromedioEsperaLimpieza(promedioEsperaLimpieza.toFixed(4)); 
+      promedioLimpieza = (tiempoTotalLimpieza + tiempoEsperaLimpieza ) / cantidadLimpiezasTerminadas;
+    }
+  
+    setPromedioTotalSalidaLavado(promedioLavado.toFixed(4))
+    setPromedioTotalSalidaLimpieza(promedioLimpieza.toFixed(4));
+
+    if (promedioLavado === 0){
+      setServicioMasRapido("Limpieza");
+    }
+    else if (promedioLimpieza === 0){
+      setServicioMasRapido("Lavado");
+    }
+    else if (promedioLimpieza > promedioLavado) {
+      setServicioMasRapido("Lavado");
+    } else {
+      setServicioMasRapido("Limpieza");
+    }
+
+  }, [datos])
 
   return (
     <main className="p-6 font-sans bg-gray-100 min-h-screen">
@@ -194,6 +250,37 @@ function App() {
           </tbody>
         </table>
       </div>
+      <div className="mt-6 p-6 bg-white rounded-2xl shadow-lg border border-gray-200 max-w-xl mx-auto">
+  <h2 className="text-2xl font-bold mb-6 text-center text-blue-700">📊 Estadísticas</h2>
+
+        <div className="grid grid-cols-1 gap-4 text-gray-800 text-sm md:text-base">
+          <div className="flex justify-between items-center">
+            <span className="font-medium">⏳ Espera promedio lavado:</span>
+            <span className="text-gray-700">{promedioEsperaLavado} minutos</span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="font-medium">🧽 Espera promedio limpieza interior:</span>
+            <span className="text-gray-700">{promedioEsperaLimpieza} minutos</span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="font-medium">🚘 Prom. salida sistema de lavado:</span>
+            <span>{promedioTotalSalidaLavado} minutos</span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="font-medium">🚗 Prom. salida limpieza interior:</span>
+            <span>{promedioTotalSalidaLimpieza} minutos</span>
+          </div>
+
+          <div className="flex justify-between items-center bg-blue-50 p-2 rounded-md">
+            <span className="font-semibold text-blue-700">⚡ Servicio más rápido:</span>
+            <span className="text-blue-700 font-bold">{servicioMasRapido}</span>
+          </div>
+        </div>
+      </div>
+
       {mostrarModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center flex-col z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-[80%] max-h-[95%] max-w-3xl relative overflow-auto">
