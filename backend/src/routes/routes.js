@@ -1,9 +1,8 @@
 import { Router } from "express";
-import simulacion from "../simulation/simulation.js"
+import simulacion from "../simulation/simulation.js";
+import { secadoMaquinaRk4EndPoint, secadoSoloRk4EndPoint } from "../rk4/rk4.js";
 
 const router = Router();
-
-
 
 router.post("/simular", async (req, res) => {
   try {
@@ -18,8 +17,6 @@ router.post("/simular", async (req, res) => {
       mediaFinLimpieza,
     } = req.body;
 
-
-
     const result = await simulacion(
       Number(cantidadAGenerar),
       Number(primeroAMostrar),
@@ -32,16 +29,33 @@ router.post("/simular", async (req, res) => {
     );
 
     res.json(result);
-
   } catch (error) {
     res.status(500).json({ error: "error" });
   }
 });
 
-router.get("/mostrar", (req, res) => {
-  res.json({
-    message: "Runge Kutta",
-  });
+router.post("/rk4", async (req, res) => {
+  try {
+    const { humedad, h, k, tiempoSecadoSolo } = req.body;
+
+    let secadoMaquinaRk4;
+    let secadoSoloRk4;
+
+    if (humedad != 100) {
+      secadoSoloRk4 = secadoSoloRk4EndPoint(humedad, h, k, tiempoSecadoSolo, 0);
+      secadoMaquinaRk4 = secadoMaquinaRk4EndPoint(humedad, h);
+    } else {
+      secadoMaquinaRk4 = secadoMaquinaRk4EndPoint(humedad, h);
+      secadoSoloRk4 = null;
+    }
+
+    res.json({
+      secadoMaquinaRk4,
+      secadoSoloRk4,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "error" });
+  }
 });
 
 export default router;

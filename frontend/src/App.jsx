@@ -5,6 +5,10 @@ import "./index.css";
 
 function App() {
   const [datos, setDatos] = useState([]);
+  const maxVehiculos = datos.reduce((max, fila) => {
+    const vehiculosEnFila = fila.slice(35).length;
+    return Math.max(max, vehiculosEnFila);
+  }, 0);
   return (
     <main className="p-6 font-sans bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-4 text-center">
@@ -15,19 +19,18 @@ function App() {
         <table className="table-auto w-full text-sm border border-gray-300">
           <thead className="sticky top-0 bg-blue-100 text-gray-700 z-10">
             <tr>
-              <th colSpan={34} className="text-left px-2 py-1 border">
+              <th colSpan={35} className="text-left px-2 py-1 border">
                 Datos generales
               </th>
-              {datos.length > 0 &&
-                datos[0].slice(34).map((_, i) => (
-                  <th
-                    key={`vehiculo-header-${i}`}
-                    colSpan={4}
-                    className="text-left px-2 py-1 border"
-                  >
-                    Vehículo {i + 1}
-                  </th>
-                ))}
+              {Array.from({ length: maxVehiculos }).map((_, i) => (
+                <th
+                  key={`vehiculo-header-${i}`}
+                  colSpan={6}
+                  className="text-left px-2 py-1 border"
+                >
+                  Vehículo {i + 1}
+                </th>
+              ))}
             </tr>
             <tr>
               {[
@@ -74,22 +77,23 @@ function App() {
                   {header}
                 </th>
               ))}
-              {datos.length > 0 &&
-                datos[0].slice(34).map((vehiculo, i) =>
-                  [
-                    "Estado",
-                    "Tiempo Llegada",
-                    "Humedad",
-                    "Inicio secado solo",
-                  ].map((subHeader, j) => (
-                    <th
-                      key={`vehiculo-${i}-sub-${j}`}
-                      className="px-2 py-1 border text-xs text-left"
-                    >
-                      {subHeader}
-                    </th>
-                  ))
-                )}
+              {Array.from({ length: maxVehiculos }).map((_, i) =>
+                [
+                  "Estado",
+                  "Tiempo Llegada",
+                  "Incio limpieza",
+                  "Incio lavado",
+                  "Inicio secado solo",
+                  "Incio secado máquina",
+                ].map((subHeader, j) => (
+                  <th
+                    key={`vehiculo-${i}-sub-${j}`}
+                    className="px-2 py-1 border text-xs text-left"
+                  >
+                    {subHeader}
+                  </th>
+                ))
+              )}
             </tr>
           </thead>
           <tbody>
@@ -113,12 +117,14 @@ function App() {
                   </td>
                 ))}
                 {fila.slice(35).map((vehiculo, vehiculoIndex) =>
-                  vehiculo && typeof vehiculo === "object" ? (
+                  vehiculo ? (
                     [
                       vehiculo.estado,
                       vehiculo.tiempoLlegada,
-                      vehiculo.humedad,
+                      vehiculo.tiempoComienzoLimpieza,
+                      vehiculo.tiempoComienzoLavado,
                       vehiculo.tiempoComienzoSecadoSolo,
+                      vehiculo.tiempoComienzoSecadoMaquina,
                     ].map((val, idx) => (
                       <td
                         key={`vehiculo-${vehiculoIndex}-campo-${idx}`}
