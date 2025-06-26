@@ -52,15 +52,15 @@ export default function simulacion(
   );
   vectorActual = vectorAnterior;
 
-  for (let i = 1; i <= cantidadEventos; i++) {
+  for (let i = 1; i <= cantidadEventos+1; i++) {
     let eventos = [5, 8, 13, 14, 17, 20];
 
-    // if (vectorAnterior[i] >= primerEvento && cantLineas > 0) {
-    //   historial.push(JSON.parse(JSON.stringify(vectorAnterior)));
-    //   cantLineas -= 1;
-    // }
+
     vectorAnterior = [...vectorActual];
-    historial.push(JSON.parse(JSON.stringify(vectorAnterior)));
+
+    if (vectorAnterior[0] >= primerEvento && vectorAnterior[0] < primerEvento + cantidadLineas || vectorActual[0] == cantidadEventos) {
+      historial.push(JSON.parse(JSON.stringify(vectorAnterior)));
+    }
 
     let siguienteEvento = calcularSiguienteEvento(vectorAnterior, eventos);
 

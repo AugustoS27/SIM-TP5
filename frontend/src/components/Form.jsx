@@ -24,6 +24,17 @@ function FormularioSimulacion({ onResultadoRecibido }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const cantidadAGenerar = parseInt(formData.cantidadAGenerar);
+      const cantidadAMostrar = parseInt(formData.cantidadAMostrar);
+      const primeroAMostrar = parseInt(formData.primeroAMostrar);
+
+      const cantidadLineasAMostrar = cantidadAMostrar + primeroAMostrar;
+
+      if(cantidadLineasAMostrar > cantidadAGenerar){
+        alert("La cantidad a mostrar no puede ser mayor que la cantidad a generar.");
+        return;
+      } 
+
       const data = await simular(formData);
       onResultadoRecibido(data);
     } catch (err) {

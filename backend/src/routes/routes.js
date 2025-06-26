@@ -62,11 +62,14 @@ router.post("/rk4", async (req, res) => {
         k = 0.25
         break;
     }
-    
+
+    let humedad1;
 
     if (humedad != 100) {
-      secadoSoloRk4 = secadoSoloRk4EndPoint(humedad, h, k, tiempoSecadoSolo, 0);
-      secadoMaquinaRk4 = secadoMaquinaRk4EndPoint(humedad, h);
+      secadoSoloRk4 = secadoSoloRk4EndPoint(100, h, k, tiempoSecadoSolo, 0);
+      // sacar el valor de la ultima humedad del secado solo
+      humedad1 = secadoSoloRk4[secadoSoloRk4.length - 1].H;
+      secadoMaquinaRk4 = secadoMaquinaRk4EndPoint(humedad1, h);
     } else {
       secadoMaquinaRk4 = secadoMaquinaRk4EndPoint(humedad, h);
       secadoSoloRk4 = null;
