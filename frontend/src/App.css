@@ -1,10 +1,12 @@
+@import "tailwindcss";
 table {
   border-collapse: collapse;
   width: 100%;
   overflow-x: auto;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #ccc;
   padding: 6px 10px;
   text-align: center;
